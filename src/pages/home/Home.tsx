@@ -11,6 +11,7 @@ import {
   StartCountdownButton,
   TaskInput,
 } from './styles'
+import { useState } from 'react';
 
 const newCycleFormValidationSchema = zod.object({
   task: zod.string().min(1, 'Informe a tarefa'),
@@ -19,8 +20,16 @@ const newCycleFormValidationSchema = zod.object({
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema> //para refenciar uma variável JS em TS, precisa ser tipado
 
+interface Cycle {
+  id: string,
+  task: string,
+  minutesAmount: number,
+}
+
 export function Home() {
-  
+
+  const [cycles, setCycles] = useState<Cycle[]>([])
+  const [activeCycleID, setActiveCycleID] = useState<string | null>(null)
 
   const { handleSubmit, register, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
@@ -33,8 +42,18 @@ export function Home() {
   const isSubmitDisabled = watch('task') //observa o input registrado como task, para saber o momento que não está mais vazio
 
   const handleCreateNewCycle = (data: NewCycleFormData) => {
+    const id = String(new Date().getTime()) //pega os milissegundos pra transformar em im ID único
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+    }
+    setCycles(state => [...state, newCycle])
+    setActiveCycleID(id)
     reset()
   }
+
+  const activeCycle = cycles.find(cycle => cycle.id === activeCycleID)
 
   return (
     <HomeContainer>
