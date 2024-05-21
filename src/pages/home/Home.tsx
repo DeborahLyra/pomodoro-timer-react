@@ -30,6 +30,7 @@ export function Home() {
 
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleID, setActiveCycleID] = useState<string | null>(null)
+  const [amountSecondPast, setAmountSecondPast] = useState(0)
 
   const { handleSubmit, register, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
@@ -48,12 +49,23 @@ export function Home() {
       task: data.task,
       minutesAmount: data.minutesAmount,
     }
-    setCycles(state => [...state, newCycle])
+    setCycles(state => [...state, newCycle]) //quando vai se adicionar algo ao array existente, é melhor usar o estado prévio
     setActiveCycleID(id)
     reset()
   }
 
   const activeCycle = cycles.find(cycle => cycle.id === activeCycleID)
+
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0 //calcular o total se segundos
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondPast : 0 //calcula o que falta dos segundos para passar
+
+  const minutesAmount = Math.floor(currentSeconds /60) //calcula os minutos dos segundos 
+
+  const secondsAmount = currentSeconds % 60 //calcula quantos segundos faltam
+
+  const minutes = String(minutesAmount).padStart(2, '0') //diz que a const tem que ter 2 char, se não tiver, coloca um 0 na frente
+  const seconds = String(secondsAmount).padStart(2, '0') 
+
 
   return (
     <HomeContainer>
@@ -87,11 +99,11 @@ export function Home() {
         </FormContainer>
 
         <CountDownContainer>
-          <span>0</span>
-          <span>0</span>
+          <span>{minutes[0]}</span>
+          <span>{minutes[1]}</span>
           <Separator>:</Separator>
-          <span>0</span>
-          <span>0</span>
+          <span>{seconds[0]}</span>
+          <span>{seconds[1]}</span>
         </CountDownContainer>
 
         <StartCountdownButton disabled={!isSubmitDisabled} type="submit">
