@@ -54,6 +54,7 @@ export function Home() {
     }
     setCycles(state => [...state, newCycle]) //quando vai se adicionar algo ao array existente, é melhor usar o estado prévio
     setActiveCycleID(id)
+    setAmountSecondPast(0) //precisa sempre zerar para que não fique com o valor do ciclo anterior
     reset()
   }
 
@@ -72,12 +73,27 @@ export function Home() {
 
 
   useEffect(()=> {
+    let interval: number
+
     if(activeCycle){
-      setInterval(()=>{
+     interval = setInterval(()=>{
         setAmountSecondPast(differenceInSeconds(new Date(), activeCycle.startDate))
       }, 1000)
     }
+
+    return () => { //deleta os intervalos que não precisa mais 
+      clearInterval(interval)
+    }
   },[activeCycle])
+
+
+  useEffect(()=> {
+    if(activeCycle){
+     document.title = `${minutes}:${seconds}`
+    }
+
+  },[activeCycle,minutes, seconds])
+
 
   return (
     <HomeContainer>
