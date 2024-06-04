@@ -16,6 +16,7 @@ interface Cycle {
 
 
 interface CyclesContextType {
+    cycles: Cycle[],
     activeCycle: Cycle | undefined,
     activeCycleID: string | null,
     marckCycleAsFinished: () => void,
@@ -54,7 +55,6 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
         setCycles(state => [...state, newCycle]) //quando vai se adicionar algo ao array existente, é melhor usar o estado prévio
         setActiveCycleID(id)
         setAmountSecondPast(0) //precisa sempre zerar para que não fique com o valor do ciclo anterior
-        //reset()
     }
 
     const marckCycleAsFinished = () => {
@@ -81,6 +81,7 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
     return (
         <CyclesContext.Provider
             value={{
+                cycles,
                 activeCycle,
                 activeCycleID,
                 marckCycleAsFinished,

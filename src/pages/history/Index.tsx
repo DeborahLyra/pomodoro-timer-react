@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { HistoryContainer, HistoryList, Status } from "./styles";
+import { CyclesContext } from "../../contexts/CyclesContext";
 
 export function History() {
+  //const { cyles } = useContext(CyclesContext)
+
   return (
     <HistoryContainer>
       <h1>Meu Histórico</h1>
@@ -45,5 +49,5 @@ export function History() {
         </table>
       </HistoryList>
     </HistoryContainer>
-    )
+  )
 }

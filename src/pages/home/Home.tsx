@@ -37,10 +37,14 @@ export function Home() {
 
   const isSubmitDisabled = watch('task') //observa o input registrado como task, para saber o momento que não está mais vazio
 
+const handelCreateNewCycle = (data: NewCycleFormData) => {
+  createNewCycle(data)
 
+  reset()
+}
   return (
     <HomeContainer>
-      <form action="" onSubmit={handleSubmit(createNewCycle)}>
+      <form action="" onSubmit={handleSubmit(handelCreateNewCycle)}>
         <FormProvider {...newCyleForm}>
           <NewCycleForm />
         </FormProvider>
