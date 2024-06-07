@@ -1,9 +1,11 @@
 import { useContext } from "react";
 import { HistoryContainer, HistoryList, Status } from "./styles";
 import { CyclesContext } from "../../contexts/CyclesContext";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export function History() {
-  //const { cyles } = useContext(CyclesContext)
+  const { cycles } = useContext(CyclesContext)
 
   return (
     <HistoryContainer>
@@ -20,31 +22,29 @@ export function History() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>tarefa</td>
-              <td>20min</td>
-              <td>há dois meses</td>
-              <td>
-                <Status statusColor="green">Concluido</Status>
-              </td>
+            {
+              cycles.map(cycle => {
+                return (
+                  <tr key={cycle.id}>
+                    <td>{cycle.task}</td>
+                    <td>{cycle.minutesAmount} minutos</td>
+                    <td>{formatDistanceToNow(cycle.startDate, {addSuffix: true, locale: ptBR})}</td>
+                    <td>
+                      {
+                        cycle.finishedtDate && <Status statusColor="green">Concluido</Status>
+                      }
+                      {
+                        cycle.interruptedtDate && <Status statusColor="red">Interrompido</Status>
+                      }
+                      {
+                        (!cycle.interruptedtDate && !cycle.finishedtDate) && <Status statusColor="yellow">Em andamento</Status>
+                      }
+                    </td>
 
-            </tr>
-            <tr>
-              <td>tarefa</td>
-              <td>20min</td>
-              <td>há dois meses</td>
-              <td>
-                <Status statusColor="yellow">Pausado</Status>
-              </td>
-            </tr>
-            <tr>
-              <td>tarefa</td>
-              <td>20min</td>
-              <td>há dois meses</td>
-              <td>
-                <Status statusColor="red">Cancelado</Status>
-              </td>
-            </tr>
+                  </tr>
+                )
+              })
+            }
           </tbody>
         </table>
       </HistoryList>

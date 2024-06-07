@@ -88,7 +88,8 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
                 amountSecondPast,
                 setSecondPassed,
                 createNewCycle,
-                interruptCycle
+                interruptCycle,
+               
             }}
         >
             {children}
