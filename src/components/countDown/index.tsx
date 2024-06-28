@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import './styles'
 import { CountDownContainer } from './styles'
 import { Separator } from './styles'
@@ -7,7 +7,7 @@ import { CyclesContext } from '../../contexts/CyclesContext'
 
 
 export function CountDown() {
-    const {activeCycle, activeCycleID, marckCycleAsFinished, amountSecondPast, setSecondPassed} = useContext(CyclesContext)
+    const {activeCycle, marckCycleAsFinished, amountSecondPast, setSecondPassed} = useContext(CyclesContext)
     
     const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0 //calcular o total se segundos
 
@@ -43,7 +43,7 @@ export function CountDown() {
             }
           }, 1000)
         }
-        return () => { //deleta os intervalos que não precisa mais 
+        return () => { //deleta os intervalos que não precisam mais 
           clearInterval(interval)
         }
       }, [activeCycle, totalSeconds, marckCycleAsFinished])
