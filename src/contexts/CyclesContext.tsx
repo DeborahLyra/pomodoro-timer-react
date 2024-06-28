@@ -18,7 +18,7 @@ interface Cycle {
 interface CyclesContextType {
     cycles: Cycle[],
     activeCycle: Cycle | undefined,
-    activeCycleID: string | null,
+    activeCycleId: string | null,
     marckCycleAsFinished: () => void,
     amountSecondPast: number,
     setSecondPassed: (seconds: number) => void,
@@ -40,21 +40,52 @@ export const CyclesContext = createContext({} as CyclesContextType)
 
 export function CyclesContextProvider({ children }: CyclesContextProviderProps) {
 
-    const [cycles, dispatch] = useReducer((state: Cycle[], action: any) => {
+    const [cyclesState, dispatch] = useReducer((state: CyclesState, action: any) => {
 
         if (action.type === 'ADD_NEW_CYCLE'){
-            return (
-                [...state, action.payload.newCycle]
-            )
+            return  {
+                    ...state,
+                   cycles: [...state.cycles, action.payload.newCycle],
+                   activeCycleId: action.payload.newCycle.id
+                }
+            
+        }
+
+        if (action.type === 'INTERRUPT_CURRENT_CYCLE'){
+            return {
+                ...state,
+                cycles: state.cycles.map((cycle) => {
+                    if (cycle.id === state.activeCycleId) {
+                        return { ...cycle, interruptedtDate: new Date() }
+                    } else {
+                        return cycle
+                    }
+                    }),
+                activeCycleId: null
+            }
+        }
+
+        if (action.type === 'MARK_CURRENT_CYCLE_AS_FINISHED'){
+            return {
+                ...state,
+                cycles: state.cycles.map((cycle) => {
+                    if (cycle.id === state.activeCycleId) {
+                        return { ...cycle, finishedtDate: new Date() }
+                    } else {
+                        return cycle
+                    }
+                }),
+                activeCycleId: null
+            }
         }
         return state
-    }, [])
+    }, {cycles: [], activeCycleId: null})
 
+    const { cycles, activeCycleId } = cyclesState
 
     const [amountSecondPast, setAmountSecondPast] = useState(0)
-    const [activeCycleID, setActiveCycleID] = useState<string | null>(null)
 
-    const activeCycle = cycles.find(cycle => cycle.id === activeCycleID)
+    const activeCycle = cycles.find(cycle => cycle.id === activeCycleId)
 
     const setSecondPassed = (seconds: number) => {
         setAmountSecondPast(seconds)
@@ -75,7 +106,6 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
             payload: { newCycle }
         })
         //setCycles(state => [...state, newCycle]) //quando vai se adicionar algo ao array existente, é melhor usar o estado prévio
-        setActiveCycleID(id)
         setAmountSecondPast(0) //precisa sempre zerar para que não fique com o valor do ciclo anterior
     }
 
@@ -83,7 +113,7 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
 
         dispatch({
             type: 'MARK_CURRENT_CYCLE_AS_FINISHED',
-            payload: { activeCycleID }
+            payload: { activeCycleId }
         })
         // setCycles(state => state.map((cycle) => {
         //     if (cycle.id === activeCycleID) {
@@ -97,7 +127,7 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
     const interruptCycle = () => {
         dispatch({
             type: 'INTERRUPT_CURRENT_CYCLE',
-            payload:{ activeCycleID }
+            payload:{ activeCycleId }
         })
         // setCycles((state) => state.map((cycle) => {
         //     if (cycle.id === activeCycleID) {
@@ -106,7 +136,7 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
         //         return cycle
         //     }
         // }))
-         setActiveCycleID(null)
+         //setActiveCycleID(null)
     }
 
     return (
@@ -114,7 +144,7 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
             value={{
                 cycles,
                 activeCycle,
-                activeCycleID,
+                activeCycleId,
                 marckCycleAsFinished,
                 amountSecondPast,
                 setSecondPassed,
