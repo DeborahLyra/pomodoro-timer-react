@@ -34,7 +34,7 @@ export function CountDown() {
           interval = setInterval(() => {
             const secondsDifference = differenceInSeconds(new Date(), activeCycle.startDate)
     
-            if (secondsDifference >= totalSeconds) { //para saber se 
+            if (secondsDifference >= totalSeconds) { 
                 marckCycleAsFinished()
                 setSecondPassed(totalSeconds)
               clearInterval(interval)
